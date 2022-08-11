@@ -1,6 +1,6 @@
 [*]
 indent_style = space
-indent_size = 2
+indent_size = 4
 
 # Unix-style newlines with a newline ending in every file
 [*]

@@ -5,6 +5,7 @@ import express, { Request, Response, Application } from 'express';
 import appRouter from './routes';
 import { notFound } from './middlewares/notFound';
 import { errorHandler } from './middlewares/errorHandler';
+import logger from './misc/logger';
 
 dotenv.config();
 
@@ -25,4 +26,4 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
+app.listen(PORT, () => logger.info(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
