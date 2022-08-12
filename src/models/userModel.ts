@@ -1,7 +1,6 @@
-import { StatusCodes } from "http-status-codes";
 import db from "../db/db";
 import { User, UserInsertedResponse, UserToInsert } from "../domain/User";
-import CustomError from "../misc/CustomError";
+import { databaseError } from "../utils/databaseError";
 
 export default class UserAccount {
     public static table = "user_account";
@@ -15,10 +14,7 @@ export default class UserAccount {
 
             return user;
         } catch (error) {
-            throw new CustomError(
-                "Database Error",
-                StatusCodes.INTERNAL_SERVER_ERROR
-            );
+            throw databaseError;
         }
     }
 
@@ -32,10 +28,7 @@ export default class UserAccount {
 
             return insertedUser;
         } catch {
-            throw new CustomError(
-                "Database Error",
-                StatusCodes.INTERNAL_SERVER_ERROR
-            );
+            throw databaseError;
         }
     }
 }
