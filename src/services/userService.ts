@@ -45,7 +45,7 @@ export const signup = async (
     email: string,
     password: string
 ): Promise<Success<UserInsertedResponse>> => {
-    logger.info("Sign in - checking credentials");
+    logger.info("Sign up - checking credentials");
     if (!email || !password) {
         throw new CustomError("Missing information", StatusCodes.BAD_REQUEST);
     }

@@ -5,8 +5,6 @@ dotenv.config({
   path: __dirname + `/../../.env`,
 });
 
-// Update with your config settings.
-
 const config: { [key: string]: Knex.Config } = {
   development: {
     client: process.env.DB_CLIENT,
