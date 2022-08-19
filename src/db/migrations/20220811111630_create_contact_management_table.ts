@@ -6,8 +6,8 @@ export async function up(knex: Knex): Promise<void> {
         table.string("name").notNullable();
         table.bigInteger("phone").notNullable();
         table.integer("user_id");
-        table.boolean("favourite");
-        table.string("photo_url");
+        table.boolean("favourite").defaultTo(false);
+        table.string("photo_url").notNullable();
         table.foreign("user_id").references("id").inTable("user_account");
     });
 }

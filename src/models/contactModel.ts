@@ -1,6 +1,6 @@
 import db from "../db/db";
 import { Contact, ContactToInsert } from "../domain/Contact";
-import { databaseError } from "../utils/databaseError";
+import { databaseError } from "../utils/errors";
 
 export default class ContactManagement {
     public static table = "contact_management";

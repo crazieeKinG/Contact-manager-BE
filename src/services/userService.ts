@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { createAccessToken } from "../utils/createAccessToken";
 import { Token } from "../domain/Token";
 import logger from "../misc/logger";
-import { UserInsertedResponse } from "../domain/User";
+import { UserInsertedResponse, UserToInsert } from "../domain/User";
 import userModel from "../models/userModel";
 
 export const signin = async (
@@ -42,13 +42,11 @@ export const signin = async (
 };
 
 export const signup = async (
-    email: string,
-    password: string
+    data: UserToInsert
 ): Promise<Success<UserInsertedResponse>> => {
-    logger.info("Sign up - checking credentials");
-    if (!email || !password) {
-        throw new CustomError("Missing information", StatusCodes.BAD_REQUEST);
-    }
+    logger.info("Sign up");
+
+    const password = data.password;
 
     logger.info("Encryptng user password");
     const salt = await bcrypt.genSalt(10);
@@ -56,7 +54,7 @@ export const signup = async (
 
     logger.info("Inserting data in database");
     const insertedUser = await userModel.createUser({
-        email: email,
+        ...data,
         password: passwordHash,
     });
 
