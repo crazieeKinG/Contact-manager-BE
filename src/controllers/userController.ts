@@ -11,10 +11,10 @@ export const signin = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const signup = (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+    const data = req.body;
 
     userService
-        .signup(email, password)
+        .signup(data)
         .then((data) => res.json(data))
         .catch((err) => next(err));
 };

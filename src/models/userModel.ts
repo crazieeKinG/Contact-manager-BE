@@ -1,6 +1,6 @@
 import db from "../db/db";
 import { User, UserInsertedResponse, UserToInsert } from "../domain/User";
-import { databaseError } from "../utils/databaseError";
+import { databaseError } from "../utils/errors";
 
 export default class UserAccount {
     public static table = "user_account";
@@ -24,7 +24,7 @@ export default class UserAccount {
         try {
             const insertedUser: UserInsertedResponse = await db(
                 this.table
-            ).insert(user, ["id", "email"]);
+            ).insert(user, ["id", "username", "email"]);
 
             return insertedUser;
         } catch {
