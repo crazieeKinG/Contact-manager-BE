@@ -9,8 +9,8 @@ export default class ContactManagement {
         try {
             const contacts = await db(this.table)
                 .select()
-                .where({ userId: currentUser });
-
+                .where({ userId: currentUser })
+                .orderBy("name");
             return contacts;
         } catch {
             throw databaseError;

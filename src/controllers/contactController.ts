@@ -1,8 +1,13 @@
 import { NextFunction, Response } from "express";
 import { DEFAULT_PROFILE_PICTURE } from "../constants/contactConstants";
 import { AuthorizedRequest } from "../domain/User";
-import fileHandler from "../fileHandlers/fileHandler";
+import uploadImage from "../fileHandlers/uploadImage";
+import logger from "../misc/logger";
 import * as contactService from "../services/contactService";
+import contactModel from "../models/ContactModel";
+import deleteImage from "../fileHandlers/deleteImage";
+import { cloudinaryError } from "../utils/errors";
+import fs from "fs";
 
 export const getAllContacts = (
     req: AuthorizedRequest,
@@ -38,7 +43,7 @@ export const createContact = async (
     let cloudinaryUrl: string = DEFAULT_PROFILE_PICTURE;
     if (!!req.file) {
         const fileString = (<Express.Multer.File>req.file).path;
-        cloudinaryUrl = await fileHandler(fileString);
+        cloudinaryUrl = await uploadImage(fileString);
     }
 
     const currentUser = req.authUser as number;
@@ -57,13 +62,27 @@ export const updateContact = async (
     const { contactId } = req.params;
 
     let cloudinaryUrl: string = DEFAULT_PROFILE_PICTURE;
-    if (!!req.file) {
-        const fileString = (<Express.Multer.File>req.file).path;
-        cloudinaryUrl = await fileHandler(fileString);
-    }
-
+    let contact = req.body;
+    const fileString = (<Express.Multer.File>req.file).path;
     const currentUser = req.authUser as number;
-    const contact = { ...req.body, photoUrl: cloudinaryUrl };
+
+    if (!!req.file) {
+        logger.info("Deleting previous contact image");
+        const previousContact = await contactModel.getContactById(
+            +contactId,
+            currentUser
+        );
+        const response = await deleteImage(previousContact.photoUrl);
+        
+        if (response.toString() === "ok") {
+            logger.info("Uploading contact image");
+            cloudinaryUrl = await uploadImage(fileString);
+            contact = { ...contact, photoUrl: cloudinaryUrl };
+        } else {
+            fs.unlinkSync(fileString);
+            throw cloudinaryError;
+        }
+    }
 
     contactService
         .updateContact(+contactId, contact, currentUser)
@@ -71,7 +90,7 @@ export const updateContact = async (
         .catch((error) => next(error));
 };
 
-export const deleteContact = (
+export const deleteContact = async (
     req: AuthorizedRequest,
     res: Response,
     next: NextFunction
@@ -79,8 +98,19 @@ export const deleteContact = (
     const currentUser = req.authUser as number;
     const { contactId } = req.params;
 
-    contactService
-        .deleteContact(+contactId, currentUser)
-        .then((data) => res.json(data))
-        .catch((error) => next(error));
+    logger.info("Deleting previous contact image");
+    const previousContact = await contactModel.getContactById(
+        +contactId,
+        currentUser
+    );
+    const response = await deleteImage(previousContact.photoUrl);
+
+    if (response.toString() === "ok") {
+        contactService
+            .deleteContact(+contactId, currentUser)
+            .then((data) => res.json(data))
+            .catch((error) => next(error));
+    } else {
+        throw cloudinaryError;
+    }
 };
