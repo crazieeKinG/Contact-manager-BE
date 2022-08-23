@@ -8,11 +8,11 @@ const router = Router();
 router.use(authenticate);
 
 router.get("/", contactController.getAllContacts);
-router.post("/", upload.single("photoUrl"), contactController.createContact);
+router.post("/", upload.single("photo"), contactController.createContact);
 router.get("/:contactId", contactController.getContactById);
 router.put(
     "/:contactId",
-    upload.single("photoUrl"),
+    upload.single("photo"),
     contactController.updateContact
 );
 router.delete("/:contactId", contactController.deleteContact);

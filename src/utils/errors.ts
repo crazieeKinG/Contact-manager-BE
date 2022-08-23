@@ -12,6 +12,6 @@ export const multerError = new CustomError(
 );
 
 export const cloudinaryError = new CustomError(
-    "Upload Error",
+    "Cloudinary Error",
     StatusCodes.INTERNAL_SERVER_ERROR
 );

@@ -2,7 +2,7 @@ import cloudinary from "./cloudinary";
 import fs from "fs";
 import { cloudinaryError } from "../utils/errors";
 
-const fileHandler = async (fileString: string) => {
+const uploadImage = async (fileString: string) => {
     try {
         if (!fs.existsSync(fileString)) {
             throw new Error("File not found!");
@@ -20,4 +20,4 @@ const fileHandler = async (fileString: string) => {
     }
 };
 
-export default fileHandler;
+export default uploadImage;

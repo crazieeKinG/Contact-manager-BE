@@ -36,7 +36,7 @@ export const signin = async (
     const accessToken = createAccessToken({ userId: user.id });
 
     return {
-        data: { accessToken: accessToken },
+        data: { accessToken: accessToken, username: user.username },
         message: "Log in successful",
     };
 };
