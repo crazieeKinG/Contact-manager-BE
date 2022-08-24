@@ -4,7 +4,7 @@ import { AuthorizedRequest } from "../domain/User";
 import uploadImage from "../fileHandlers/uploadImage";
 import logger from "../misc/logger";
 import * as contactService from "../services/contactService";
-import contactModel from "../models/ContactModel";
+import contactModel from "../models/contactModel";
 import deleteImage from "../fileHandlers/deleteImage";
 import { cloudinaryError } from "../utils/errors";
 import fs from "fs";
