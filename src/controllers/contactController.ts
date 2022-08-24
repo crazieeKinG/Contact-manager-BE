@@ -40,7 +40,6 @@ export const createContact = async (
     res: Response,
     next: NextFunction
 ) => {
-    logger.info("Inserting contact");
     let cloudinaryUrl: string = DEFAULT_PROFILE_PICTURE;
     if (!!req.file) {
         logger.info("Uploading contact image");
