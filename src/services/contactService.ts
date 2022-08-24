@@ -1,7 +1,7 @@
 import { Contact, ContactToInsert } from "../domain/Contact";
 import Success from "../domain/Success";
 import logger from "../misc/logger";
-import contactModel from "../models/ContactModel";
+import contactModel from "../models/contactModel";
 
 export const getAllContacts = async (
     currentUser: number
