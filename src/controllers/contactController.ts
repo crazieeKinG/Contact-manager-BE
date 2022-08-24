@@ -63,7 +63,6 @@ export const updateContact = async (
 
     let cloudinaryUrl: string = DEFAULT_PROFILE_PICTURE;
     let contact = req.body;
-    const fileString = (<Express.Multer.File>req.file).path;
     const currentUser = req.authUser as number;
 
     if (!!req.file) {
@@ -73,7 +72,8 @@ export const updateContact = async (
             currentUser
         );
         const response = await deleteImage(previousContact.photoUrl);
-        
+
+        const fileString = (<Express.Multer.File>req.file).path;
         if (response.toString() === "ok") {
             logger.info("Uploading contact image");
             cloudinaryUrl = await uploadImage(fileString);
