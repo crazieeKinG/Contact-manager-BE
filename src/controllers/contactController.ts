@@ -42,6 +42,7 @@ export const createContact = async (
 ) => {
     let cloudinaryUrl: string = DEFAULT_PROFILE_PICTURE;
     if (!!req.file) {
+        logger.info("Uploading contact image");
         const fileString = (<Express.Multer.File>req.file).path;
         cloudinaryUrl = await uploadImage(fileString);
     }
