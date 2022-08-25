@@ -9,6 +9,12 @@ import deleteImage from "../fileHandlers/deleteImage";
 import { cloudinaryError } from "../utils/errors";
 import fs from "fs";
 
+/**
+ * It gets all contacts information.
+ * @param {AuthorizedRequest} req 
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ */
 export const getAllContacts = (
     req: AuthorizedRequest,
     res: Response,
@@ -21,6 +27,12 @@ export const getAllContacts = (
         .catch((error) => next(error));
 };
 
+/**
+ * It gets a single contact information.
+ * @param {AuthorizedRequest} req 
+ * @param {Response} res
+ * @param {NextFunction} next 
+ */
 export const getContactById = (
     req: AuthorizedRequest,
     res: Response,
@@ -35,6 +47,12 @@ export const getContactById = (
         .catch((error) => next(error));
 };
 
+/**
+ * It uploads an image to cloudinary, and then creates a contact in the database.
+ * @param {AuthorizedRequest} req 
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ */
 export const createContact = async (
     req: AuthorizedRequest,
     res: Response,
@@ -55,6 +73,13 @@ export const createContact = async (
         .then((data) => res.json(data))
         .catch((error) => next(error));
 };
+
+/**
+ * It updates a contact
+ * @param {AuthorizedRequest} req
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ */
 export const updateContact = async (
     req: AuthorizedRequest,
     res: Response,
@@ -90,7 +115,12 @@ export const updateContact = async (
         .then((data) => res.json(data))
         .catch((error) => next(error));
 };
-
+/**
+  * If deletes the contact.
+  * @param {AuthorizedRequest} req - AuthorizedRequest,
+  * @param {Response} res - Response,
+  * @param {NextFunction} next - NextFunction
+  */
 export const deleteContact = async (
     req: AuthorizedRequest,
     res: Response,

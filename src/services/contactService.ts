@@ -3,6 +3,11 @@ import Success from "../domain/Success";
 import logger from "../misc/logger";
 import contactModel from "../models/contactModel";
 
+/**
+ * It gets all contact information.
+ * @param {number} currentUser
+ * @returns contact information list
+ */
 export const getAllContacts = async (
     currentUser: number
 ): Promise<Success<Contact[]>> => {
@@ -15,6 +20,12 @@ export const getAllContacts = async (
     };
 };
 
+/**
+ * It gets a contact by id.
+ * @param {number} contactId
+ * @param {number} currentUser
+ * @returns contact object
+ */
 export const getContactById = async (
     contactId: number,
     currentUser: number
@@ -28,6 +39,12 @@ export const getContactById = async (
     };
 };
 
+/**
+ * This function creates a contact.
+ * @param {ContactToInsert} contact
+ * @param {number} currentUser
+ * @returns inserted contact
+ */
 export const createContact = async (
     contact: ContactToInsert,
     currentUser: number
@@ -44,6 +61,13 @@ export const createContact = async (
     };
 };
 
+/**
+ * This function updates a contact in the database.
+ * @param {number} contactId 
+ * @param {ContactToInsert} contact
+ * @param {number} currentUser
+ * @returns udated contact
+ */
 export const updateContact = async (
     contactId: number,
     contact: ContactToInsert,
@@ -62,6 +86,12 @@ export const updateContact = async (
     };
 };
 
+/**
+ * This function deletes a contact from the database and returns a success message.
+ * @param {number} contactId 
+ * @param {number} currentUser 
+ * @returns deleted contact
+ */
 export const deleteContact = async (
     contactId: number,
     currentUser: number

@@ -9,6 +9,13 @@ import logger from "../misc/logger";
 import { UserInsertedResponse, UserToInsert } from "../domain/User";
 import userModel from "../models/userModel";
 
+/**
+ * It takes an email and password, checks if the user exists, if the user exists, it checks if the
+ * password matches, if the password matches, it creates an access token and returns it
+ * @param {string} email
+ * @param {string} password 
+ * @returns access token and username
+ */
 export const signin = async (
     email: string,
     password: string
@@ -41,6 +48,11 @@ export const signin = async (
     };
 };
 
+/**
+ * It takes a user object, encrypts the password, and inserts the user into the database.
+ * @param {UserToInsert} data
+ * @returns inserted user
+ */
 export const signup = async (
     data: UserToInsert
 ): Promise<Success<UserInsertedResponse>> => {
