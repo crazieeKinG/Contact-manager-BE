@@ -1,6 +1,7 @@
 import multer from "multer";
 import { multerError } from "../utils/errors";
 
+/* Creating a storage object that will be used by multer to store the file. */
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         if (file) {

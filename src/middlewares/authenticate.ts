@@ -5,6 +5,12 @@ import jwt from "jsonwebtoken";
 import { AuthorizedRequest, TokenPayload } from "../domain/User";
 import CustomError from "../misc/CustomError";
 
+/**
+ * It tries to verify the access token in the request header, and if it's valid, it adds the userId to the request object.
+ * @param {AuthorizedRequest} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
 const authenticate = async (
     req: AuthorizedRequest,
     res: Response,
