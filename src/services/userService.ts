@@ -20,12 +20,6 @@ export const signin = async (
     email: string,
     password: string
 ): Promise<Success<Token>> => {
-    logger.info("Sign in - checking credentials");
-
-    if (!email || !password) {
-        throw new CustomError("Missing credentials", StatusCodes.BAD_REQUEST);
-    }
-
     logger.info("Checking user availability");
     const user = await userModel.getUserByEmail(email);
 

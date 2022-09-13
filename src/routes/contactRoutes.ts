@@ -1,7 +1,7 @@
 import { Router } from "express";
 import authenticate from "../middlewares/authenticate";
-import * as contactController from "../controllers/contactController";
 import upload from "../fileHandlers/multer";
+import { contactController } from "../controllers";
 
 const router = Router();
 

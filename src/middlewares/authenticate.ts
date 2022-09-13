@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import jwt from "jsonwebtoken";
-import { AuthorizedRequest, TokenPayload } from "../domain/User";
+import { AuthorizedRequest, TokenPayload } from "../domain/AuthorizedRequest";
 import CustomError from "../misc/CustomError";
 
 /**

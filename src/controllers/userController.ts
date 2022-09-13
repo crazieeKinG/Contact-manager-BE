@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import * as userService from "../services/userService";
+import {
+    SIGNIN_PARAMETERS,
+    SIGNUP_PARAMETERS,
+} from "../constants/parameterConstants";
+import { userService } from "../services";
+import checkMissingParameters from "../utils/checkMissingParameters";
 
 /**
  * It handles user signin.
@@ -8,16 +13,23 @@ import * as userService from "../services/userService";
  * @param {NextFunction} next
  */
 export const signin = (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+    const data = req.body;
 
-    userService
-        .signin(email, password)
-        .then((data) => res.json(data))
-        .catch((err) => next(err));
+    try {
+        checkMissingParameters(data, SIGNIN_PARAMETERS);
+
+        userService
+            .signin(data.email, data.password)
+            .then((data) => res.json(data))
+            .catch((err) => next(err));
+    } catch (error) {
+        next(error);
+    }
 };
+
 /**
  * It handles user registration.
- * @param {Request} req 
+ * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  */
@@ -25,8 +37,14 @@ export const signin = (req: Request, res: Response, next: NextFunction) => {
 export const signup = (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
 
-    userService
-        .signup(data)
-        .then((data) => res.json(data))
-        .catch((err) => next(err));
+    try {
+        checkMissingParameters(data, SIGNUP_PARAMETERS);
+
+        userService
+            .signup(data)
+            .then((data) => res.json(data))
+            .catch((err) => next(err));
+    } catch (error) {
+        next(error);
+    }
 };

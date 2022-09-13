@@ -1,19 +1,21 @@
 import { NextFunction, Response } from "express";
 import { DEFAULT_PROFILE_PICTURE } from "../constants/contactConstants";
-import { AuthorizedRequest } from "../domain/User";
 import uploadImage from "../fileHandlers/uploadImage";
 import logger from "../misc/logger";
-import * as contactService from "../services/contactService";
 import contactModel from "../models/contactModel";
 import deleteImage from "../fileHandlers/deleteImage";
 import { cloudinaryError } from "../utils/errors";
 import fs from "fs";
+import { AuthorizedRequest } from "../domain/AuthorizedRequest";
+import { contactService } from "../services";
+import checkMissingParameters from "../utils/checkMissingParameters";
+import { CONTACT_CHECK_PARAMETERS } from "../constants/parameterConstants";
 
 /**
  * It gets all contacts information.
- * @param {AuthorizedRequest} req 
- * @param {Response} res 
- * @param {NextFunction} next 
+ * @param {AuthorizedRequest} req
+ * @param {Response} res
+ * @param {NextFunction} next
  */
 export const getAllContacts = (
     req: AuthorizedRequest,
@@ -21,6 +23,7 @@ export const getAllContacts = (
     next: NextFunction
 ) => {
     const currentUser = req.authUser as number;
+
     contactService
         .getAllContacts(currentUser)
         .then((data) => res.json(data))
@@ -29,9 +32,9 @@ export const getAllContacts = (
 
 /**
  * It gets a single contact information.
- * @param {AuthorizedRequest} req 
+ * @param {AuthorizedRequest} req
  * @param {Response} res
- * @param {NextFunction} next 
+ * @param {NextFunction} next
  */
 export const getContactById = (
     req: AuthorizedRequest,
@@ -49,9 +52,9 @@ export const getContactById = (
 
 /**
  * It uploads an image to cloudinary, and then creates a contact in the database.
- * @param {AuthorizedRequest} req 
- * @param {Response} res 
- * @param {NextFunction} next 
+ * @param {AuthorizedRequest} req
+ * @param {Response} res
+ * @param {NextFunction} next
  */
 export const createContact = async (
     req: AuthorizedRequest,
@@ -59,26 +62,37 @@ export const createContact = async (
     next: NextFunction
 ) => {
     let cloudinaryUrl: string = DEFAULT_PROFILE_PICTURE;
-    if (!!req.file) {
-        logger.info("Uploading contact image");
-        const fileString = (<Express.Multer.File>req.file).path;
-        cloudinaryUrl = await uploadImage(fileString);
+    const requestData = req.body;
+    delete requestData.photo;
+
+    try {
+        const contact = { ...req.body, photoUrl: cloudinaryUrl };
+        checkMissingParameters(contact, CONTACT_CHECK_PARAMETERS);
+
+        if (!!req.file) {
+            logger.info("Uploading contact image");
+            const fileString = (<Express.Multer.File>req.file).path;
+            cloudinaryUrl = await uploadImage(fileString);
+        }
+
+        const currentUser = req.authUser as number;
+        contact.photoUrl = cloudinaryUrl;
+
+        contactService
+            .createContact(contact, currentUser)
+            .then((data) => res.json(data))
+            .catch((error) => next(error));
+    } catch (error) {
+        fs.unlinkSync((<Express.Multer.File>req.file).path);
+        next(error);
     }
-
-    const currentUser = req.authUser as number;
-    const contact = { ...req.body, photoUrl: cloudinaryUrl };
-
-    contactService
-        .createContact(contact, currentUser)
-        .then((data) => res.json(data))
-        .catch((error) => next(error));
 };
 
 /**
  * It updates a contact
  * @param {AuthorizedRequest} req
- * @param {Response} res 
- * @param {NextFunction} next 
+ * @param {Response} res
+ * @param {NextFunction} next
  */
 export const updateContact = async (
     req: AuthorizedRequest,
@@ -88,39 +102,40 @@ export const updateContact = async (
     const { contactId } = req.params;
 
     let cloudinaryUrl: string = DEFAULT_PROFILE_PICTURE;
+    let previousPhotoUrl: string = "";
     let contact = req.body;
     const currentUser = req.authUser as number;
 
     if (!!req.file) {
-        logger.info("Deleting previous contact image");
         const previousContact = await contactModel.getContactById(
             +contactId,
             currentUser
         );
-        const response = await deleteImage(previousContact.photoUrl);
 
         const fileString = (<Express.Multer.File>req.file).path;
-        if (response.toString() === "ok") {
-            logger.info("Uploading contact image");
-            cloudinaryUrl = await uploadImage(fileString);
-            contact = { ...contact, photoUrl: cloudinaryUrl };
-        } else {
-            fs.unlinkSync(fileString);
-            throw cloudinaryError;
-        }
+
+        cloudinaryUrl = await uploadImage(fileString);
+        contact = {
+            ...contact,
+            photoUrl: cloudinaryUrl,
+        };
+        previousPhotoUrl = previousContact.photoUrl;
     }
 
     contactService
         .updateContact(+contactId, contact, currentUser)
-        .then((data) => res.json(data))
+        .then(async (data) => {
+            if (previousPhotoUrl) await deleteImage(previousPhotoUrl);
+            res.json(data);
+        })
         .catch((error) => next(error));
 };
 /**
-  * If deletes the contact.
-  * @param {AuthorizedRequest} req - AuthorizedRequest,
-  * @param {Response} res - Response,
-  * @param {NextFunction} next - NextFunction
-  */
+ * If deletes the contact.
+ * @param {AuthorizedRequest} req - AuthorizedRequest,
+ * @param {Response} res - Response,
+ * @param {NextFunction} next - NextFunction
+ */
 export const deleteContact = async (
     req: AuthorizedRequest,
     res: Response,

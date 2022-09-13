@@ -71,13 +71,13 @@ export const createContact = async (
 export const updateContact = async (
     contactId: number,
     contact: ContactToInsert,
-    currentUser: number
+    currentUser: number,
 ): Promise<Success<Contact>> => {
     logger.info("Updating contact");
     const updatedContact = await contactModel.updateContact(
         contactId,
         contact,
-        currentUser
+        currentUser,
     );
 
     return {

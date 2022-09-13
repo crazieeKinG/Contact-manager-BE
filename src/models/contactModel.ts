@@ -1,5 +1,6 @@
 import db from "../db/db";
 import { Contact, ContactToInsert } from "../domain/Contact";
+import deleteImage from "../fileHandlers/deleteImage";
 import { databaseError } from "../utils/errors";
 
 export default class ContactManagement {
@@ -24,7 +25,7 @@ export default class ContactManagement {
 
     /**
      * This function returns a contact from the database based on the contactId and the currentUser.
-     * @param {number} contactId 
+     * @param {number} contactId
      * @param {number} currentUser
      * @returns The contact object
      */
@@ -45,7 +46,7 @@ export default class ContactManagement {
      * It takes in a contact object and a user id, inserts the contact into the database, and returns
      * the inserted contact.
      * @param {ContactToInsert} contact
-     * @param {number} currentUser 
+     * @param {number} currentUser
      * @returns The inserted contact
      */
     public static async createContact(
@@ -59,6 +60,7 @@ export default class ContactManagement {
 
             return insertedContact;
         } catch {
+            await deleteImage(contact.photoUrl);
             throw databaseError;
         }
     }
@@ -66,7 +68,7 @@ export default class ContactManagement {
     /**
      * Update a contact in the database, returning the updated contact.
      * @param {number} contactId
-     * @param {ContactToInsert} contact 
+     * @param {ContactToInsert} contact
      * @param {number} currentUser
      * @returns The updated contact
      */
@@ -83,6 +85,7 @@ export default class ContactManagement {
 
             return updatedContact;
         } catch {
+            await deleteImage(contact.photoUrl);
             throw databaseError;
         }
     }
